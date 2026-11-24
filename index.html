@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="denicon.png">
+    <title>ㄌㄌ 照護日誌 V7.3 測試版</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;700&family=Cormorant+Garamond:ital,wght@1,600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --m-purple: #5A4E70; --m-purple-light: #9B92B0; --m-bg: #F4F0F7;
+            --cream: #FFFDF9; --gold: #A68D5F; --text-serif: #2E2A33;
+            --milk-tea-gradient: linear-gradient(135deg, #F2E9E1 0%, #FFFFFF 100%);
+        }
+        body { background-color: var(--m-bg); font-family: 'Noto Serif TC', serif; color: var(--text-serif); margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; }
+        .ui-header { text-align: center; margin-bottom: 25px; padding: 10px 0; width: 100%; max-width: 500px; border-bottom: 1px solid var(--m-purple-light); }
+        .ui-header h1 { color: var(--m-purple); font-size: 24px; margin: 0; font-weight: 700; letter-spacing: 1px; }
+        .ui-header p { color: var(--m-purple-light); font-size: 11px; letter-spacing: 3px; margin: 5px 0 0; }
+        .editor-container { width: 100%; max-width: 500px; padding-bottom: 50px; }
+        .editor-section { background: white; border-radius: 25px; padding: 22px; margin-bottom: 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.04); }
+        .editor-title { font-weight: 700; color: var(--m-purple); margin-bottom: 12px; font-size: 17px; border-left: 4px solid var(--gold); padding-left: 10px; }
+        .field-label { font-size: 12px; color: var(--m-purple-light); font-weight: 700; margin: 12px 0 6px; display: block; }
+        textarea, select, input[type="text"] { width: 100%; padding: 12px; border-radius: 12px; border: 1.5px solid #E0D7EA; background: var(--m-bg); margin-bottom: 8px; box-sizing: border-box; font-size: 14px; font-family: 'Noto Serif TC', serif; outline: none; }
+        .photo-grid-edit { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+        .photo-box-edit { position: relative; aspect-ratio: 3 / 4; border-radius: 10px; background: #F0F0F0; border: 1px dashed var(--m-purple-light); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .photo-box-edit.ratio-43 { aspect-ratio: 4 / 3; }
+        .photo-box-edit img { width: 100%; height: 100%; object-fit: cover; z-index: 2; position: absolute; top: 0; left: 0; display: none; }
+        .photo-box-edit input { position: absolute; opacity: 0; width: 100%; height: 100%; cursor: pointer; z-index: 5; }
+        .photo-box-edit span { font-size: 10px; color: var(--m-purple-light); z-index: 1; }
+        .btn-stack { display: flex; gap: 8px; margin-top: 15px; }
+        .btn { border: none; padding: 14px; border-radius: 50px; font-weight: 700; cursor: pointer; font-family: 'Noto Serif TC', serif; font-size: 14px; transition: 0.3s; }
+        .btn-gen { background: var(--m-purple); color: white; flex: 2; }
+        .btn-dl { background: #E0E0E0; color: #AAA; flex: 1.2; pointer-events: none; }
+        .btn-dl.active { background: var(--gold); color: white; pointer-events: auto; box-shadow: 0 5px 12px rgba(166,141,95,0.3); }
+        #render-stage { position: absolute; left: -9999px; top: 0; width: 1000px; pointer-events: none; }
+        .export-page { width: 1000px; background: var(--cream); padding: 60px; box-sizing: border-box; display: flex; flex-direction: column; image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges; }
+        .header-final { text-align: center; border-bottom: 1.5px solid var(--gold); padding-bottom: 12px; margin-bottom: 30px; }
+        .header-final h1 { margin: 0; color: var(--m-purple); font-size: 30px; font-weight: 700; letter-spacing: 0.5px; }
+        .chapter-tag { font-family: 'Cormorant Garamond', serif; font-style: italic; color: var(--gold); font-size: 26px; margin-top: 5px; }
+        .info-bar-final { display: flex; justify-content: space-between; margin-bottom: 25px; font-size: 18px; color: var(--m-purple); border-bottom: 1px dashed #E0D7EA; padding-bottom: 8px; }
+        .report-grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 20px; }
+        .col-section { background: white; border-radius: 25px; padding: 25px; border: 1px solid rgba(109,91,142,0.06); position: relative; display: flex; flex-direction: column; }
+        
+        .whisper-box { background: var(--milk-tea-gradient); border-radius: 20px; padding: 20px; margin-top: 20px; position: relative; }
+        .whisper-box .text-content-final { padding-right: 115px !important; padding-bottom: 10px; font-weight:700; min-height: 120px; } 
+        
+        .report-title-final { font-weight: 700; font-size: 21px; color: var(--m-purple); margin-bottom: 16px; display: flex; align-items: center; }
+        .report-title-final::before { content: ""; width: 6px; height: 24px; background: var(--gold); margin-right: 12px; border-radius: 3px; }
+        .photo-grid-final { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
+        
+        #stg-p32-wrap, #stg-p37-wrap { display: flex; flex-direction: column; gap: 15px; margin-bottom: 15px; }
+        .photo-box-final { width: 100%; aspect-ratio: 3/4; border-radius: 15px; overflow: hidden; background: #F8F8F8; display: none; }
+        .photo-box-final.ratio-43 { aspect-ratio: 4 / 3; }
+        .photo-box-final img { width: 100%; height: 100%; object-fit: cover; }
+        
+        /* 核心修復：為前兩頁的文字區塊加上貓咪避讓空間 */
+        .text-content-final { font-size: 18px; line-height: 1.8; color: #333; white-space: pre-wrap; min-height: 40px; padding-bottom: 90px; padding-right: 125px; }
+        
+        .cat-deco { position: absolute; right: 5px; bottom: 5px; width: 130px; height: auto; z-index: 10; }
+        
+        .footer-final { margin-top: auto; padding-top: 30px; border-top: 1.5px solid var(--m-bg); display: flex; justify-content: space-between; align-items: flex-end; }
+        .slogan-final { font-weight: 700; font-size: 19px; color: var(--m-purple-light); max-width: 650px; line-height: 1.4; font-style: italic; opacity: 0.75; }
+        .ig-area-final { text-align: right; color: var(--m-purple); font-size: 13px; font-weight: 700; }
+        .ig-area-final img { width: 120px; margin-top: 8px; }
+        .tag-badge { background: var(--m-bg); color: var(--m-purple); padding: 5px 12px; border-radius: 10px; margin-right: 8px; font-weight: 700; font-size: 15px; display: inline-block; margin-bottom: 8px; }
+        .tag-btn { background: #EEE; padding: 7px 12px; border-radius: 20px; font-size: 12px; cursor: pointer; margin: 2px; display: inline-block; }
+        .tag-btn.active { background: var(--m-purple); color: white; }
+        .photo-remove { position:absolute; top:4px; right:4px; z-index:8; border:0; border-radius:16px; padding:6px 10px; background:#5A4E70; color:white; font-size:13px; cursor:pointer; }
+        .photo-remove[hidden] { display:none; }
+        .assessment-field { border:0; padding:0; margin:16px 0; min-width:0; }
+        .assessment-field legend { color:var(--m-purple); font-weight:700; font-size:14px; margin-bottom:8px; }
+        .choice-row { display:flex; flex-wrap:wrap; gap:6px; }
+        .choice-pill { display:inline-flex; align-items:center; gap:4px; padding:8px; border-radius:12px; background:var(--m-bg); font-size:14px; cursor:pointer; }
+        .choice-pill:has(input:checked) { background:#E0D7EA; color:var(--m-purple); }
+        .choice-pill input { accent-color:var(--m-purple); margin:0; }
+        .choice-clear { border:0; background:transparent; color:var(--m-purple-light); cursor:pointer; font-size:13px; }
+        .assessment-editor { margin-top:22px; }
+        .assessment-final { border-top:1px solid #E0D7EA; padding-top:20px; font-size:18px; line-height:1.9; }
+        .assessment-final h2 { font-size:21px; color:var(--m-purple); margin:0 0 12px; }
+        #stg-m { padding-right:0; padding-bottom:12px; }
+        .photo-box-edit input:disabled { cursor:wait; }
+        .star-choice { background:transparent; padding:3px; }
+        .star-choice input { position:absolute; width:1px; height:1px; opacity:0; }
+        .star-choice span { font-size:32px; color:#C9C3D0; line-height:1.2; }
+        .star-choice:has(input:focus-visible) { outline:2px solid var(--m-purple); }
+        .star-choice:has(input:checked) { background:transparent; }
+        .star-rating:has(input[value="1"]:checked) .star-choice:nth-child(-n+1) span { color:var(--gold); }
+        .star-rating:has(input[value="2"]:checked) .star-choice:nth-child(-n+2) span { color:var(--gold); }
+        .star-rating:has(input[value="3"]:checked) .star-choice:nth-child(-n+3) span { color:var(--gold); }
+        .star-rating:has(input[value="4"]:checked) .star-choice:nth-child(-n+4) span { color:var(--gold); }
+        .star-rating:has(input[value="5"]:checked) .star-choice:nth-child(-n+5) span { color:var(--gold); }
+    </style>
+</head>
+<body>
+    <div class="ui-header">
+        <h1>嘉義寵物保姆 ㄌㄌ</h1>
+        <p>PET CARE SERVICE LOG • WORKSTATION V7.3 · 測試版</p>
+    </div>
+    <div class="editor-container">
+        <div class="editor-section">
+            <div class="editor-title">📍 當前服務對象</div>
+            <input type="text" id="i-h" placeholder="毛孩名稱" oninput="syncText()">
+            <select id="i-s" onchange="syncText()">
+                <option value="ㄌㄌ">負責保姆：ㄌㄌ</option>
+                <option value="Tiffany">負責保姆：Tiffany</option>
+                <option value="ㄌㄌ & Tiffany">負責保姆：ㄌㄌ & Tiffany</option>
+            </select>
+        </div>
+        
+        <div class="editor-section">
+            <div class="editor-title">🥣 CHAPTER 01：飲食與補水</div>
+            <span class="field-label">🍴 飲食管理紀錄</span>
+            <div class="photo-grid-edit">
+                <div class="photo-box-edit"><span>📷1</span><img src=""><input type="file" data-id="p1" aria-label="選擇照片 1" onchange="pv(this, 'stg-p1')"></div>
+                <div class="photo-box-edit"><span>📷2</span><img src=""><input type="file" data-id="p2" aria-label="選擇照片 2" onchange="pv(this, 'stg-p1')"></div>
+                <div class="photo-box-edit"><span>📷3</span><img src=""><input type="file" data-id="p3" aria-label="選擇照片 3" onchange="pv(this, 'stg-p1')"></div>
+                <div class="photo-box-edit"><span>📷4</span><img src=""><input type="file" data-id="p4" aria-label="選擇照片 4" onchange="pv(this, 'stg-p1')"></div>
+                <div class="photo-box-edit"><span>📷5</span><img src=""><input type="file" data-id="p5" aria-label="選擇照片 5" onchange="pv(this, 'stg-p1')"></div>
+                <div class="photo-box-edit"><span>📷6</span><img src=""><input type="file" data-id="p6" aria-label="選擇照片 6" onchange="pv(this, 'stg-p1')"></div>
+                <div class="photo-box-edit"><span>📷7</span><img src=""><input type="file" data-id="p39" aria-label="選擇照片 7" onchange="pv(this, 'stg-p1')"></div>
+                <div class="photo-box-edit"><span>📷8</span><img src=""><input type="file" data-id="p40" aria-label="選擇照片 8" onchange="pv(this, 'stg-p1')"></div>
+                <div class="photo-box-edit"><span>📷9</span><img src=""><input type="file" data-id="p41" aria-label="選擇照片 9" onchange="pv(this, 'stg-p1')"></div>
+                <div class="photo-box-edit"><span>📷10</span><img src=""><input type="file" data-id="p42" aria-label="選擇照片 10" onchange="pv(this, 'stg-p1')"></div>
+            </div>
+            <textarea id="i-f" rows="2" placeholder="詳細描述..." oninput="syncText()"></textarea>
+            <span class="field-label">💧 補水觀察紀錄</span>
+            <div class="photo-grid-edit">
+                <div class="photo-box-edit"><span>📷1</span><img src=""><input type="file" data-id="p7" aria-label="選擇照片 1" onchange="pv(this, 'stg-p7')"></div>
+                <div class="photo-box-edit"><span>📷2</span><img src=""><input type="file" data-id="p8" aria-label="選擇照片 2" onchange="pv(this, 'stg-p7')"></div>
+                <div class="photo-box-edit"><span>📷3</span><img src=""><input type="file" data-id="p9" aria-label="選擇照片 3" onchange="pv(this, 'stg-p7')"></div>
+                <div class="photo-box-edit"><span>📷4</span><img src=""><input type="file" data-id="p10" aria-label="選擇照片 4" onchange="pv(this, 'stg-p7')"></div>
+                <div class="photo-box-edit"><span>📷5</span><img src=""><input type="file" data-id="p11" aria-label="選擇照片 5" onchange="pv(this, 'stg-p7')"></div>
+                <div class="photo-box-edit"><span>📷6</span><img src=""><input type="file" data-id="p12" aria-label="選擇照片 6" onchange="pv(this, 'stg-p7')"></div>
+                <div class="photo-box-edit"><span>📷7</span><img src=""><input type="file" data-id="p43" aria-label="選擇照片 7" onchange="pv(this, 'stg-p7')"></div>
+                <div class="photo-box-edit"><span>📷8</span><img src=""><input type="file" data-id="p44" aria-label="選擇照片 8" onchange="pv(this, 'stg-p7')"></div>
+                <div class="photo-box-edit"><span>📷9</span><img src=""><input type="file" data-id="p45" aria-label="選擇照片 9" onchange="pv(this, 'stg-p7')"></div>
+                <div class="photo-box-edit"><span>📷10</span><img src=""><input type="file" data-id="p46" aria-label="選擇照片 10" onchange="pv(this, 'stg-p7')"></div>
+            </div>
+            <textarea id="i-w" rows="2" placeholder="詳細描述..." oninput="syncText()"></textarea>
+            <div class="btn-stack">
+                <button id="gen-1" class="btn btn-gen" onclick="generate(1)">🚀 產生第 01 頁高清圖</button>
+                <button id="dl-1" class="btn btn-dl" onclick="trigDL(1)">📥 下載</button>
+            </div>
+        </div>
+
+        <div class="editor-section">
+            <div class="editor-title">🔍 CHAPTER 02：生理與醫囑</div>
+            <span class="field-label">💩 健康排泄監測</span>
+            <div class="photo-grid-edit">
+                <div class="photo-box-edit"><span>📷1</span><img src=""><input type="file" data-id="p13" aria-label="選擇照片 1" onchange="pv(this, 'stg-p13')"></div>
+                <div class="photo-box-edit"><span>📷2</span><img src=""><input type="file" data-id="p14" aria-label="選擇照片 2" onchange="pv(this, 'stg-p13')"></div>
+                <div class="photo-box-edit"><span>📷3</span><img src=""><input type="file" data-id="p15" aria-label="選擇照片 3" onchange="pv(this, 'stg-p13')"></div>
+                <div class="photo-box-edit"><span>📷4</span><img src=""><input type="file" data-id="p16" aria-label="選擇照片 4" onchange="pv(this, 'stg-p13')"></div>
+                <div class="photo-box-edit"><span>📷5</span><img src=""><input type="file" data-id="p17" aria-label="選擇照片 5" onchange="pv(this, 'stg-p13')"></div>
+                <div class="photo-box-edit"><span>📷6</span><img src=""><input type="file" data-id="p18" aria-label="選擇照片 6" onchange="pv(this, 'stg-p13')"></div>
+                <div class="photo-box-edit"><span>📷7</span><img src=""><input type="file" data-id="p47" aria-label="選擇照片 7" onchange="pv(this, 'stg-p13')"></div>
+                <div class="photo-box-edit"><span>📷8</span><img src=""><input type="file" data-id="p48" aria-label="選擇照片 8" onchange="pv(this, 'stg-p13')"></div>
+                <div class="photo-box-edit"><span>📷9</span><img src=""><input type="file" data-id="p49" aria-label="選擇照片 9" onchange="pv(this, 'stg-p13')"></div>
+                <div class="photo-box-edit"><span>📷10</span><img src=""><input type="file" data-id="p50" aria-label="選擇照片 10" onchange="pv(this, 'stg-p13')"></div>
+            </div>
+            <textarea id="i-p" rows="2" placeholder="詳細描述..." oninput="syncText()"></textarea>
+            <span class="field-label">💊 醫囑與保健品執行</span>
+            <div class="photo-grid-edit">
+                <div class="photo-box-edit"><span>📷1</span><img src=""><input type="file" data-id="p19" aria-label="選擇照片 1" onchange="pv(this, 'stg-p19')"></div>
+                <div class="photo-box-edit"><span>📷2</span><img src=""><input type="file" data-id="p20" aria-label="選擇照片 2" onchange="pv(this, 'stg-p19')"></div>
+                <div class="photo-box-edit"><span>📷3</span><img src=""><input type="file" data-id="p21" aria-label="選擇照片 3" onchange="pv(this, 'stg-p19')"></div>
+                <div class="photo-box-edit"><span>📷4</span><img src=""><input type="file" data-id="p22" aria-label="選擇照片 4" onchange="pv(this, 'stg-p19')"></div>
+            </div>
+            <textarea id="i-m" rows="2" placeholder="詳細描述..." oninput="syncText()"></textarea>
+            <div class="assessment-editor"><div class="editor-title">🐾 毛寶今日狀態觀察</div><fieldset class="assessment-field"><legend>精神活力狀態</legend><div class="choice-row star-rating"><label class="choice-pill star-choice" title="1 顆星"><input type="radio" name="energy" value="1" aria-label="1 顆星" onchange="syncText()"><span>★</span></label><label class="choice-pill star-choice" title="2 顆星"><input type="radio" name="energy" value="2" aria-label="2 顆星" onchange="syncText()"><span>★</span></label><label class="choice-pill star-choice" title="3 顆星"><input type="radio" name="energy" value="3" aria-label="3 顆星" onchange="syncText()"><span>★</span></label><label class="choice-pill star-choice" title="4 顆星"><input type="radio" name="energy" value="4" aria-label="4 顆星" onchange="syncText()"><span>★</span></label><label class="choice-pill star-choice" title="5 顆星"><input type="radio" name="energy" value="5" aria-label="5 顆星" onchange="syncText()"><span>★</span></label><button type="button" class="choice-clear" onclick="clearChoice('energy')">清除</button></div></fieldset><fieldset class="assessment-field"><legend>有無嘔吐</legend><div class="choice-row"><label class="choice-pill"><input type="radio" name="vomit" value="有" onchange="syncText()"><span>有</span></label><label class="choice-pill"><input type="radio" name="vomit" value="無" onchange="syncText()"><span>無</span></label><button type="button" class="choice-clear" onclick="clearChoice('vomit')">清除</button></div></fieldset><fieldset class="assessment-field"><legend>便溺排泄狀態</legend><div class="choice-row"><label class="choice-pill"><input type="radio" name="toilet" value="正常" onchange="syncText()"><span>正常</span></label><label class="choice-pill"><input type="radio" name="toilet" value="微軟便" onchange="syncText()"><span>微軟便</span></label><label class="choice-pill"><input type="radio" name="toilet" value="軟便拉稀" onchange="syncText()"><span>軟便拉稀</span></label><label class="choice-pill"><input type="radio" name="toilet" value="量少偏乾" onchange="syncText()"><span>量少偏乾</span></label><button type="button" class="choice-clear" onclick="clearChoice('toilet')">清除</button></div></fieldset><fieldset class="assessment-field"><legend>食慾狀態</legend><div class="choice-row star-rating"><label class="choice-pill star-choice" title="1 顆星"><input type="radio" name="appetite" value="1" aria-label="1 顆星" onchange="syncText()"><span>★</span></label><label class="choice-pill star-choice" title="2 顆星"><input type="radio" name="appetite" value="2" aria-label="2 顆星" onchange="syncText()"><span>★</span></label><label class="choice-pill star-choice" title="3 顆星"><input type="radio" name="appetite" value="3" aria-label="3 顆星" onchange="syncText()"><span>★</span></label><label class="choice-pill star-choice" title="4 顆星"><input type="radio" name="appetite" value="4" aria-label="4 顆星" onchange="syncText()"><span>★</span></label><label class="choice-pill star-choice" title="5 顆星"><input type="radio" name="appetite" value="5" aria-label="5 顆星" onchange="syncText()"><span>★</span></label><button type="button" class="choice-clear" onclick="clearChoice('appetite')">清除</button></div></fieldset><fieldset class="assessment-field"><legend>心情</legend><div class="choice-row star-rating"><label class="choice-pill star-choice" title="1 顆星"><input type="radio" name="mood" value="1" aria-label="1 顆星" onchange="syncText()"><span>★</span></label><label class="choice-pill star-choice" title="2 顆星"><input type="radio" name="mood" value="2" aria-label="2 顆星" onchange="syncText()"><span>★</span></label><label class="choice-pill star-choice" title="3 顆星"><input type="radio" name="mood" value="3" aria-label="3 顆星" onchange="syncText()"><span>★</span></label><label class="choice-pill star-choice" title="4 顆星"><input type="radio" name="mood" value="4" aria-label="4 顆星" onchange="syncText()"><span>★</span></label><label class="choice-pill star-choice" title="5 顆星"><input type="radio" name="mood" value="5" aria-label="5 顆星" onchange="syncText()"><span>★</span></label><button type="button" class="choice-clear" onclick="clearChoice('mood')">清除</button></div></fieldset></div>
+            <div class="btn-stack">
+                <button id="gen-2" class="btn btn-gen" onclick="generate(2)">🚀 產生第 02 頁高清圖</button>
+                <button id="dl-2" class="btn btn-dl" onclick="trigDL(2)">📥 下載</button>
+            </div>
+        </div>
+
+        <div class="editor-section">
+            <div class="editor-title">💖 CHAPTER 03：互動與驗收</div>
+            <span class="field-label">🌟 今日主打星 (互動頂端橫照)</span>
+            <div class="photo-box-edit ratio-43" style="width:100%; margin-bottom:10px;">
+                <span>📷 上傳主打星橫照</span><img src=""><input type="file" data-id="p25" onchange="pv(this, 'stg-p25')">
+            </div>
+            <span class="field-label">📸 暖心互動組圖 (6 豎)</span>
+            <div class="photo-grid-edit">
+                <div class="photo-box-edit"><span>📷1</span><img src=""><input type="file" data-id="p26" onchange="pv(this, 'stg-p26')"></div>
+                <div class="photo-box-edit"><span>📷2</span><img src=""><input type="file" data-id="p27" onchange="pv(this, 'stg-p26')"></div>
+                <div class="photo-box-edit"><span>📷3</span><img src=""><input type="file" data-id="p28" onchange="pv(this, 'stg-p26')"></div>
+                <div class="photo-box-edit"><span>📷4</span><img src=""><input type="file" data-id="p29" onchange="pv(this, 'stg-p26')"></div>
+                <div class="photo-box-edit"><span>📷5</span><img src=""><input type="file" data-id="p30" onchange="pv(this, 'stg-p26')"></div>
+                <div class="photo-box-edit"><span>📷6</span><img src=""><input type="file" data-id="p31" onchange="pv(this, 'stg-p26')"></div>
+            </div>
+            <span class="field-label">📸 追加互動新圖 (1橫+2豎)</span>
+            <div class="photo-box-edit ratio-43" style="width:100%; margin-bottom:6px;">
+                <span>📷 追加橫照</span><img src=""><input type="file" data-id="p36" onchange="pv(this, 'stg-p36')">
+            </div>
+            <div class="photo-grid-edit" style="grid-template-columns: 1fr 1fr; margin-bottom:10px;">
+                <div class="photo-box-edit"><span>追加豎照📷1</span><img src=""><input type="file" data-id="p37" onchange="pv(this, 'stg-p37')"></div>
+                <div class="photo-box-edit"><span>追加豎照📷2</span><img src=""><input type="file" data-id="p38" onchange="pv(this, 'stg-p37')"></div>
+            </div>
+            
+            <textarea id="i-b" rows="2" placeholder="互動詳細描述..." oninput="syncText()"></textarea>
+            <textarea id="i-t" rows="3" placeholder="💌 ㄌㄌ 想對毛爸媽說的悄悄話..." oninput="syncText()" style="border: 2px solid var(--gold); margin-top:10px;"></textarea>
+            <span class="field-label">🛡️ 安全衛生驗收 (單列大圖版)</span>
+            <div class="photo-grid-edit" style="grid-template-columns: 1fr;">
+                <div class="photo-box-edit ratio-43"><span>查核📷1</span><img src=""><input type="file" data-id="p32" onchange="pv(this, 'stg-p32')"></div>
+                <div class="photo-box-edit ratio-43"><span>查核📷2</span><img src=""><input type="file" data-id="p33" onchange="pv(this, 'stg-p32')"></div>
+                <div class="photo-box-edit ratio-43"><span>查核📷3</span><img src=""><input type="file" data-id="p34" onchange="pv(this, 'stg-p32')"></div>
+                <div class="photo-box-edit ratio-43"><span>查核📷4</span><img src=""><input type="file" data-id="p35" onchange="pv(this, 'stg-p32')"></div>
+            </div>
+            <div class="tag-container" style="margin-top:10px;">
+                <div class="tag-btn" onclick="tg(this)">✅玩具零食已收好</div><div class="tag-btn" onclick="tg(this)">✅電器安全巡查</div><div class="tag-btn" onclick="tg(this)">✅門窗鎖閉確認</div>
+            </div>
+            <fieldset class="assessment-field"><legend>環境清潔</legend><div class="choice-row">
+                <label class="choice-pill"><input type="checkbox" name="cleaning" value="已吸塵" onchange="syncText()"><span>已吸塵</span></label>
+                <label class="choice-pill"><input type="checkbox" name="cleaning" value="已掃地" onchange="syncText()"><span>已掃地</span></label>
+            </div></fieldset>
+            <fieldset class="assessment-field"><legend>室內溫濕舒適度</legend><div class="choice-row"><label class="choice-pill"><input type="radio" name="comfort" value="良好" onchange="syncText()"><span>良好</span></label><label class="choice-pill"><input type="radio" name="comfort" value="微悶熱" onchange="syncText()"><span>微悶熱</span></label><button type="button" class="choice-clear" onclick="clearChoice('comfort')">清除</button></div></fieldset>
+            <label class="choice-pill"><input type="checkbox" name="garbage" value="垃圾已打包帶走" onchange="syncText()"><span>垃圾已打包帶走</span></label>
+            <textarea id="i-sa" rows="2" placeholder="補充說明..." oninput="syncText()"></textarea>
+            <div class="btn-stack">
+                <button id="gen-3" class="btn btn-gen" onclick="generate(3)">🚀 產生第 03 頁高清圖</button>
+                <button id="dl-3" class="btn btn-dl" onclick="trigDL(3)">📥 下載</button>
+            </div>
+        </div>
+        <center><button class="tag-btn" style="background:#999; color:white; padding:10px 20px;" onclick="rs()">↺ 下一戶：徹底抹除暫存</button></center>
+    </div>
+
+    <div id="render-stage">
+        <div class="export-page" id="page-1">
+            <div class="header-final"><h1>嘉義寵物保姆 ㄌㄌ ∥ 到府服務日誌</h1><div class="chapter-tag">Chapter 01. Nutrition & Hydration</div></div>
+            <div class="info-bar-final"><span class="h-sync"></span><span class="h-date"></span></div>
+            <div class="report-grid-2col">
+                <div class="col-section"><div class="report-title-final">🍴 飲食管理紀錄</div><div class="photo-grid-final" id="stg-p1"></div><div class="text-content-final" id="stg-f"></div><img src="cat_black.png" class="cat-deco"></div>
+                <div class="col-section"><div class="report-title-final">💧 補水觀察紀錄</div><div class="photo-grid-final" id="stg-p7"></div><div class="text-content-final" id="stg-w"></div><img src="cat_striped.png" class="cat-deco"></div>
+            </div>
+            <div class="footer-final"><div class="slogan-final">「慢步調陪伴，讓孩子在咀嚼與吞嚥間感受最溫柔的守護。」</div><div class="ig-area-final">歡迎追蹤ㄌㄌ，因為你家小寶貝可能會上鏡頭喔！<br><img src="ig.png"></div></div>
+        </div>
+        <div class="export-page" id="page-2">
+            <div class="header-final"><h1>嘉義寵物保姆 ㄌㄌ ∥ 到府服務日誌</h1><div class="chapter-tag">Chapter 02. Health & Medical Care</div></div>
+            <div class="info-bar-final"><span class="h-sync"></span><span class="h-date"></span></div>
+            <div class="report-grid-2col">
+                <div class="col-section"><div class="report-title-final">💩 健康排泄監測</div><div class="photo-grid-final" id="stg-p13"></div><div class="text-content-final" id="stg-p"></div><img src="cat_orange.png" class="cat-deco"></div>
+                <div class="col-section"><div class="report-title-final">💊 醫囑與保健品執行</div><div class="photo-grid-final" id="stg-p19"></div><div class="text-content-final" id="stg-m"></div><div id="stg-assessment" class="assessment-final" hidden></div></div>
+            </div>
+            <div class="footer-final"><div class="slogan-final">「細膩的監測，是為了陪孩子走更長、更遠、更穩的路。」</div><div class="ig-area-final">歡迎追蹤ㄌㄌ，因為你家小寶貝可能會上鏡頭喔！<br><img src="ig.png"></div></div>
+        </div>
+        <div class="export-page" id="page-3">
+            <div class="header-final"><h1>嘉義寵物保姆 ㄌㄌ ∥ 到府服務日誌</h1><div class="chapter-tag">Chapter 03. Interaction & Safety</div></div>
+            <div class="info-bar-final"><span class="h-sync"></span><span class="h-date"></span></div>
+            <div class="report-grid-2col">
+                <div class="col-section">
+                    <div class="report-title-final">📸 暖心互動紀錄</div>
+                    <div id="stg-p25-wrap" style="width:100%; margin-bottom:15px;"></div>
+                    <div class="photo-grid-final" id="stg-p26"></div>
+                    <div id="stg-p36-wrap" style="width:100%; margin-bottom:12px;"></div>
+                    <div class="photo-grid-final" style="grid-template-columns: 1fr 1fr;" id="stg-p37"></div>
+                    <div class="text-content-final" id="stg-b" style="padding-right: 0;"></div> </div>
+                <div class="col-section">
+                    <div class="report-title-final">🛡️ 安全衛生驗收</div>
+                    <div id="stg-p32-wrap"></div>
+                    <div id="stg-tags" style="margin-top:10px;"></div>
+                    <div class="text-content-final" id="stg-sa" style="font-size:16px; border-top:1px dashed #DDD; padding-top:15px; color:var(--gold); margin-top:10px; padding-right: 0;"></div>
+                    
+                    <div class="whisper-box">
+                        <div class="report-title-final">💌 ㄌㄌ想對毛爸媽說的悄悄話</div>
+                        <div class="text-content-final" id="stg-t"></div>
+                    </div>
+                    <img src="cat_tortie.png" class="cat-deco" style="width:130px; right: 5px; bottom: 5px;">
+                </div>
+            </div>
+            <div class="footer-final"><div class="slogan-final">「生活雖然匆忙，但我會一直在這，陪孩子享受愜意的日常。」</div><div class="ig-area-final">歡迎追蹤ㄌㄌ，因為你家小寶貝可能會上鏡頭喔！<br><img src="ig.png"></div></div>
+        </div>
+    </div>
+
+<script>
+    const STORAGE_KEY = 'lili-report-next:v1:draft';
+    const dbName = 'LiliReportNext_V1';
+    const fields = ['i-h','i-f','i-w','i-p','i-m','i-b','i-t','i-sa','i-s'];
+    const assessments = [
+        ['energy','精神活力狀態',true], ['vomit','有無嘔吐',false],
+        ['toilet','便溺排泄狀態',false], ['appetite','食慾狀態',true], ['mood','心情',true]
+    ];
+    let db, pageBlobs = {}, ready = false, revision = 0;
+    const photoInputs = Array.from(document.querySelectorAll('.photo-box-edit input'));
+    const photoVersions = {};
+    const pendingPhotos = new Set();
+    let storageWarningShown = false;
+    function storageError() {
+        if (!storageWarningShown) {
+            storageWarningShown = true;
+            alert('暫存未能完成，請先保留此畫面，並下載已完成的報告。');
+        }
+    }
+    function invalidate() {
+        revision++;
+        pageBlobs = {};
+        document.querySelectorAll('.btn-dl').forEach(b => b.classList.remove('active'));
+        [1,2,3].forEach(n => document.getElementById(`gen-${n}`).innerText = `🚀 產生第 0${n} 頁高清圖`);
+    }
+    photoInputs.forEach((input, order) => {
+        input.dataset.order = order;
+        input.disabled = true;
+        const button = document.createElement('button');
+        button.type = 'button'; button.className = 'photo-remove'; button.textContent = '刪除'; button.hidden = true;
+        button.setAttribute('aria-label', `刪除照片 ${input.dataset.id}`);
+        button.onclick = () => removePhoto(input);
+        input.parentElement.appendChild(button);
+    });
+    const req = indexedDB.open(dbName, 1);
+    req.onupgradeneeded = e => {
+        e.target.result.createObjectStore('photos');
+        e.target.result.createObjectStore('state');
+    };
+    req.onerror = storageError;
+    req.onsuccess = async e => {
+        db = e.target.result;
+        db.onversionchange = () => db.close();
+        try { await loadAll(); ready = true; photoInputs.forEach(i => i.disabled = false); }
+        catch (error) { storageError(); }
+    };
+    function readDB(storeName, key) {
+        return new Promise((resolve,reject) => {
+            const request = db.transaction(storeName,'readonly').objectStore(storeName).get(key);
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = () => reject(request.error);
+        });
+    }
+    function writeDB(storeName, action) {
+        return new Promise((resolve,reject) => {
+            const tx = db.transaction(storeName,'readwrite');
+            action(tx.objectStore(storeName));
+            tx.oncomplete = resolve;
+            tx.onabort = tx.onerror = () => reject(tx.error);
+        });
+    }
+    function captureDraft() {
+        return {
+            fields:Object.fromEntries(fields.map(id => [id,document.getElementById(id).value])),
+            tags:Array.from(document.querySelectorAll('.tag-btn.active')).map(x => x.innerText),
+            choices:Array.from(document.querySelectorAll('.assessment-field input:checked, input[name="garbage"]:checked')).map(x => [x.name,x.value])
+        };
+    }
+    function persistDraft() {
+        if (!ready) return;
+        const draft = captureDraft();
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(draft)); } catch (error) { /* IndexedDB is the durable copy. */ }
+        writeDB('state', store => store.put(draft,'draft')).catch(storageError);
+    }
+    async function loadAll() {
+        let draft = await readDB('state','draft');
+        if (!draft) {
+            try { draft = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch(error) { draft = null; }
+        }
+        if (draft) {
+            fields.forEach(id => { if (typeof draft.fields?.[id] === 'string') document.getElementById(id).value = draft.fields[id]; });
+            document.querySelectorAll('.tag-btn').forEach(b => b.classList.toggle('active', (draft.tags || []).includes(b.innerText)));
+            document.querySelectorAll('.assessment-field input, input[name="garbage"]').forEach(input => {
+                input.checked = (draft.choices || []).some(([name,value]) => name === input.name && value === input.value);
+            });
+        }
+        syncText(false);
+        await Promise.all(photoInputs.map(async input => {
+            const data = await readDB('photos',input.dataset.id);
+            if (data) updateMirror(input,data);
+        }));
+    }
+    function addBadge(container, text) {
+        const span = document.createElement('span'); span.className = 'tag-badge'; span.innerText = text; container.appendChild(span);
+    }
+    function syncText(save = true) {
+        if (save) invalidate();
+        const pet = document.getElementById('i-h').value || ' ';
+        const staff = document.getElementById('i-s').value;
+        const now = new Date();
+        const time = `${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+        document.querySelectorAll('.h-sync').forEach(el => el.innerText = `今日到誰家：${pet} / 負責保姆：${staff}`);
+        document.querySelectorAll('.h-date').forEach(el => el.innerText = `日期：${time}`);
+        ['f','w','p','m','b','t'].forEach(id => document.getElementById(`stg-${id}`).innerText = document.getElementById(`i-${id}`).value);
+        document.getElementById('stg-sa').innerText = document.getElementById('i-sa').value ? '補充說明：' + document.getElementById('i-sa').value : '';
+        const tagBox = document.getElementById('stg-tags'); tagBox.replaceChildren();
+        document.querySelectorAll('.tag-btn.active').forEach(t => addBadge(tagBox,t.innerText));
+        const cleaning = Array.from(document.querySelectorAll('input[name="cleaning"]:checked')).map(x => x.value);
+        if (cleaning.length) addBadge(tagBox,'環境清潔：' + cleaning.join('、'));
+        const comfort = document.querySelector('input[name="comfort"]:checked');
+        if (comfort) addBadge(tagBox,'室內溫濕舒適度：' + comfort.value);
+        if (document.querySelector('input[name="garbage"]:checked')) addBadge(tagBox,'垃圾已打包帶走');
+        const summary = document.getElementById('stg-assessment'); summary.replaceChildren();
+        const selected = assessments.map(([name,label,stars]) => {
+            const choice = document.querySelector(`input[name="${name}"]:checked`);
+            return choice ? [label, stars ? '★'.repeat(Number(choice.value)) + '☆'.repeat(5-Number(choice.value)) : choice.value] : null;
+        }).filter(Boolean);
+        summary.hidden = selected.length === 0;
+        if (selected.length) {
+            const title = document.createElement('h2'); title.innerText = '🐾 毛寶今日狀態觀察'; summary.appendChild(title);
+            selected.forEach(([label,value]) => { const row = document.createElement('div'); row.innerText = `${label}：${value}`; summary.appendChild(row); });
+        }
+        if (save) persistDraft();
+    }
+    function tg(button) { button.classList.toggle('active'); syncText(); }
+    function clearChoice(name) { document.querySelectorAll(`input[name="${name}"]`).forEach(i => i.checked = false); syncText(); }
+    function stageFor(input) {
+        let id = input.getAttribute('onchange').match(/'([^']+)'/)[1];
+        if (['stg-p25','stg-p36','stg-p32'].includes(id)) id += '-wrap';
+        return document.getElementById(id);
+    }
+    function updateMirror(input, data) {
+        const box = input.parentElement;
+        const img = box.querySelector('img'); img.src = data; img.style.display = 'block';
+        box.querySelector('span').style.display = 'none'; box.querySelector('.photo-remove').hidden = false;
+        const pid = input.dataset.id, stage = stageFor(input);
+        let target = stage.querySelector(`[data-stg="${pid}"]`);
+        if (!target) {
+            target = document.createElement('div');
+            target.className = box.classList.contains('ratio-43') ? 'photo-box-final ratio-43' : 'photo-box-final';
+            target.dataset.stg = pid;
+            target.style.order = input.dataset.order;
+            // The output follows photo slot order, including after deleting or restoring.
+            const next = Array.from(stage.children).find(child => Number(child.dataset.order) > Number(input.dataset.order));
+            target.dataset.order = input.dataset.order;
+            stage.insertBefore(target,next || null);
+        }
+        target.style.display = 'block';
+        const photo = document.createElement('img'); photo.src = data; target.replaceChildren(photo);
+    }
+    function pv(input) {
+        const file = input.files[0]; if (!file || !ready) return;
+        const version = (photoVersions[input.dataset.id] || 0) + 1; photoVersions[input.dataset.id] = version;
+        const task = (async () => {
+            try {
+                const data = await new Promise((resolve,reject) => {
+                    const reader = new FileReader(); reader.onload = () => resolve(reader.result); reader.onerror = reject; reader.readAsDataURL(file);
+                });
+                const image = new Image(); image.src = data; await image.decode();
+                if (photoVersions[input.dataset.id] !== version) return;
+                await writeDB('photos', store => store.put(data,input.dataset.id));
+                if (photoVersions[input.dataset.id] !== version) return;
+                updateMirror(input,data); invalidate();
+            } catch(error) { alert('這張照片無法讀取或儲存，請重新選擇。'); }
+            finally { input.value = ''; }
+        })();
+        pendingPhotos.add(task); task.finally(() => pendingPhotos.delete(task));
+    }
+    async function removePhoto(input) {
+        photoVersions[input.dataset.id] = (photoVersions[input.dataset.id] || 0) + 1;
+        try {
+            await writeDB('photos', store => store.delete(input.dataset.id));
+            const box = input.parentElement, img = box.querySelector('img');
+            img.removeAttribute('src'); img.style.display = 'none'; box.querySelector('span').style.display = '';
+            box.querySelector('.photo-remove').hidden = true; input.value = '';
+            stageFor(input).querySelector(`[data-stg="${input.dataset.id}"]`)?.remove();
+            invalidate();
+        } catch(error) { storageError(); }
+    }
+    async function rs() {
+        if (!ready || !confirm('清除這份新版日誌，開始下一戶？')) return;
+        ready = false;
+        photoInputs.forEach(input => { input.disabled = true; photoVersions[input.dataset.id] = (photoVersions[input.dataset.id] || 0) + 1; });
+        await Promise.allSettled(Array.from(pendingPhotos));
+        try {
+            const tx = db.transaction(['photos','state'],'readwrite');
+            tx.objectStore('photos').clear(); tx.objectStore('state').clear();
+            await new Promise((resolve,reject) => { tx.oncomplete = resolve; tx.onabort = tx.onerror = reject; });
+            localStorage.removeItem(STORAGE_KEY); location.reload();
+        } catch(error) { ready = true; photoInputs.forEach(input => input.disabled = false); storageError(); }
+    }
+    async function generate(num) {
+        if (!ready) return;
+        await Promise.allSettled(Array.from(pendingPhotos));
+        const btn = document.getElementById(`gen-${num}`), dlBtn = document.getElementById(`dl-${num}`);
+        syncText(false);
+        const version = revision;
+        btn.disabled = true; btn.innerText = '⚡ 高清圖產生中...'; dlBtn.classList.remove('active');
+        delete pageBlobs[num];
+        try {
+            const target = document.getElementById(`page-${num}`);
+            await document.fonts.ready;
+            await Promise.all(Array.from(target.querySelectorAll('img')).map(img => img.decode()));
+            const canvas = await html2canvas(target,{useCORS:true,scale:3.5,backgroundColor:'#FFFDF9',logging:false});
+            const blob = await new Promise(resolve => canvas.toBlob(resolve,'image/jpeg',0.9));
+            if (!blob) throw new Error('Image export failed');
+            if (version !== revision) { btn.innerText = '內容已更新，請重新產生'; return; }
+            const petName = document.getElementById('i-h').value || '未命名';
+            const names = ['01飲食管理','02生理監控','03互動與驗收'];
+            const n = new Date();
+            const ts = `${n.getFullYear()}${String(n.getMonth()+1).padStart(2,'0')}${String(n.getDate()).padStart(2,'0')}_${String(n.getHours()).padStart(2,'0')}${String(n.getMinutes()).padStart(2,'0')}`;
+            pageBlobs[num] = {blob,name:`[ㄌㄌ照護]_${petName}_${names[num-1]}_${ts}.jpg`};
+            btn.innerText = '✅ 成功'; dlBtn.classList.add('active'); alert(`✅ 第 0${num} 頁高清報告已備妥！`);
+        } catch(error) { btn.innerText = '❌ 請重試'; alert('圖片尚未準備完成，請確認網路後重新產生。'); }
+        finally { btn.disabled = false; }
+    }
+    function trigDL(num) {
+        if (!pageBlobs[num]) return;
+        const a = document.createElement('a'), url = URL.createObjectURL(pageBlobs[num].blob);
+        a.href = url; a.download = pageBlobs[num].name; a.click();
+        setTimeout(() => URL.revokeObjectURL(url),60000);
+    }
+
+</script>
+</body>
+</html>

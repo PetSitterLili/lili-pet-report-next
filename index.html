@@ -307,7 +307,7 @@
                     <div id="stg-tags" style="margin-top:10px;"></div>
                     <div class="text-content-final" id="stg-sa" style="font-size:16px; border-top:1px dashed #DDD; padding-top:15px; color:var(--gold); margin-top:10px; padding-right: 0;"></div>
 
-                    <div class="whisper-box">
+                    <div class="whisper-box" id="stg-whisper-box" hidden>
                         <div class="report-title-final">💌 ㄌㄌ想對毛爸媽說的悄悄話</div>
                         <div class="text-content-final" id="stg-t"></div>
                     </div>
@@ -426,6 +426,7 @@
         document.querySelectorAll('.h-sync').forEach(el => el.innerText = `今日到誰家：${pet} / 負責保姆：${staff}`);
         document.querySelectorAll('.h-date').forEach(el => el.innerText = `日期：${time}`);
         ['f','w','p','m','b','t'].forEach(id => document.getElementById(`stg-${id}`).innerText = document.getElementById(`i-${id}`).value);
+        document.getElementById('stg-whisper-box').hidden = !document.getElementById('i-t').value.trim();
         document.getElementById('stg-sa').innerText = document.getElementById('i-sa').value ? '補充說明：' + document.getElementById('i-sa').value : '';
         const tagBox = document.getElementById('stg-tags'); tagBox.replaceChildren();
         document.querySelectorAll('.tag-btn.active').forEach(t => addBadge(tagBox,t.innerText));

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="denicon.png">
-    <title>ㄌㄌ 照護日誌 V7.3.1 測試版</title>
+    <title>ㄌㄌ 照護日誌 V7.3.2 測試版</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;700&family=Cormorant+Garamond:ital,wght@1,600&display=swap" rel="stylesheet">
     <style>
@@ -97,12 +97,17 @@
         .urine-row { margin:14px 0; padding:12px; background:#FAF8FC; border-radius:12px; }
         .urine-row .assessment-field { margin-bottom:0; }
         .tag-container .choice-pill { margin:2px; }
+        .food-category { margin:18px 0; padding:14px; border:1px solid #E0D7EA; border-radius:14px; }
+        .food-subheading { display:block; font-size:14px; color:var(--m-purple-light); margin:8px 0; }
+        .food-group-final { margin-bottom:16px; }
+        .food-group-final h3 { margin:0 0 4px; font-size:20px; color:var(--m-purple); }
+        .field-warning { font-size:14px; line-height:1.6; color:#8A4C30; margin:10px 0 0; }
     </style>
 </head>
 <body>
     <div class="ui-header">
         <h1>嘉義寵物保姆 ㄌㄌ</h1>
-        <p>PET CARE SERVICE LOG • WORKSTATION V7.3.1 · 測試版</p>
+        <p>PET CARE SERVICE LOG • WORKSTATION V7.3.2 · 測試版</p>
     </div>
     <div class="editor-container">
         <div class="editor-section">
@@ -130,8 +135,8 @@
                 <div class="photo-box-edit"><span>📷9</span><img src=""><input type="file" data-id="p41" aria-label="選擇照片 9" onchange="pv(this, 'stg-p1')"></div>
                 <div class="photo-box-edit"><span>📷10</span><img src=""><input type="file" data-id="p42" aria-label="選擇照片 10" onchange="pv(this, 'stg-p1')"></div>
             </div>
-            <fieldset class="assessment-field"><legend>抵達時飼料剩餘量</legend><div class="choice-row"><label class="choice-pill"><input type="radio" name="food-remaining" value="已吃完" onchange="syncText()"><span>已吃完</span></label><label class="choice-pill"><input type="radio" name="food-remaining" value="極少量" onchange="syncText()"><span>極少量</span></label><label class="choice-pill"><input type="radio" name="food-remaining" value="中等" onchange="syncText()"><span>中等</span></label><label class="choice-pill"><input type="radio" name="food-remaining" value="偏多" onchange="syncText()"><span>偏多</span></label><button type="button" class="choice-clear" onclick="clearChoice('food-remaining')">清除</button></div></fieldset><fieldset class="assessment-field"><legend>抵達時罐頭剩餘量</legend><div class="choice-row"><label class="choice-pill"><input type="radio" name="can-remaining" value="已吃完" onchange="syncText()"><span>已吃完</span></label><label class="choice-pill"><input type="radio" name="can-remaining" value="極少量" onchange="syncText()"><span>極少量</span></label><label class="choice-pill"><input type="radio" name="can-remaining" value="中等" onchange="syncText()"><span>中等</span></label><label class="choice-pill"><input type="radio" name="can-remaining" value="偏多" onchange="syncText()"><span>偏多</span></label><button type="button" class="choice-clear" onclick="clearChoice('can-remaining')">清除</button></div></fieldset><fieldset class="assessment-field"><legend>餐具</legend><div class="choice-row"><label class="choice-pill"><input type="checkbox" name="food-actions" value="已洗碗" onchange="syncText()"><span>已洗碗</span></label><label class="choice-pill"><input type="checkbox" name="food-actions" value="已擦乾" onchange="syncText()"><span>已擦乾</span></label></div></fieldset><fieldset class="assessment-field"><legend>飼料</legend><div class="choice-row"><label class="choice-pill"><input type="checkbox" name="food-actions" value="已給新飼料" onchange="syncText()"><span>已給新飼料</span></label><label class="choice-pill"><input type="checkbox" name="food-actions" value="洗碗後已把原本飼料移回蓋在上方" onchange="syncText()"><span>洗碗後已把原本飼料移回蓋在上方</span></label></div></fieldset><fieldset class="assessment-field"><legend>濕食</legend><div class="choice-row"><label class="choice-pill"><input type="checkbox" name="food-actions" value="已給新濕食" onchange="syncText()"><span>已給新濕食</span></label><label class="choice-pill"><input type="checkbox" name="food-actions" value="濕食已加水" onchange="syncText()"><span>濕食已加水</span></label><label class="choice-pill"><input type="checkbox" name="food-actions" value="濕食已加保養品" onchange="syncText()"><span>濕食已加保養品</span></label></div></fieldset>
-            <textarea id="i-f" rows="2" placeholder="詳細描述..." oninput="syncText()"></textarea>
+            <fieldset class="assessment-field food-category" data-food-group="utensils"><legend>餐具</legend><div class="choice-row"><label class="choice-pill"><input type="checkbox" name="food-actions" value="已洗碗" onchange="syncText()"><span>已洗碗</span></label><label class="choice-pill"><input type="checkbox" name="food-actions" value="已擦乾" onchange="syncText()"><span>已擦乾</span></label></div></fieldset><fieldset class="assessment-field food-category" data-food-group="dry"><legend>飼料</legend><span class="food-subheading">抵達時剩餘量</span><div class="choice-row"><label class="choice-pill"><input type="radio" name="food-remaining" value="已吃完" onchange="syncText()"><span>已吃完</span></label><label class="choice-pill"><input type="radio" name="food-remaining" value="極少量" onchange="syncText()"><span>極少量</span></label><label class="choice-pill"><input type="radio" name="food-remaining" value="中等" onchange="syncText()"><span>中等</span></label><label class="choice-pill"><input type="radio" name="food-remaining" value="偏多" onchange="syncText()"><span>偏多</span></label><button type="button" class="choice-clear" onclick="clearChoice('food-remaining')">清除</button></div><span class="food-subheading">照護處理</span><div class="choice-row"><label class="choice-pill"><input type="checkbox" name="food-actions" value="已給新飼料" onchange="syncText()"><span>已給新飼料</span></label><label class="choice-pill"><input type="checkbox" name="food-actions" value="洗碗後已把原本飼料移回蓋在上方" onchange="syncText()"><span>洗碗後已把原本飼料移回蓋在上方</span></label></div></fieldset><fieldset class="assessment-field food-category" data-food-group="wet"><legend>濕食</legend><span class="food-subheading">抵達時剩餘量</span><div class="choice-row"><label class="choice-pill"><input type="radio" name="can-remaining" value="已吃完" onchange="syncText()"><span>已吃完</span></label><label class="choice-pill"><input type="radio" name="can-remaining" value="極少量" onchange="syncText()"><span>極少量</span></label><label class="choice-pill"><input type="radio" name="can-remaining" value="中等" onchange="syncText()"><span>中等</span></label><label class="choice-pill"><input type="radio" name="can-remaining" value="偏多" onchange="syncText()"><span>偏多</span></label><button type="button" class="choice-clear" onclick="clearChoice('can-remaining')">清除</button></div><span class="food-subheading">照護處理</span><div class="choice-row"><label class="choice-pill"><input type="checkbox" name="food-actions" value="已給新濕食" onchange="syncText()"><span>已給新濕食</span></label><label class="choice-pill"><input type="checkbox" name="food-actions" value="濕食已加水" onchange="syncText()"><span>濕食已加水</span></label><label class="choice-pill"><input type="checkbox" name="food-actions" value="濕食已加保健品" onchange="syncText()"><span>濕食已加保健品</span></label></div></fieldset>
+            <textarea id="i-f" rows="2" placeholder="補充說明，例如保健品名稱、份量…" oninput="syncText()"></textarea>
             <span class="field-label">💧 補水觀察紀錄</span>
             <div class="photo-grid-edit">
                 <div class="photo-box-edit"><span>📷1</span><img src=""><input type="file" data-id="p7" aria-label="選擇照片 1" onchange="pv(this, 'stg-p7')"></div>
@@ -168,7 +173,7 @@
                 <div class="photo-box-edit"><span>📷9</span><img src=""><input type="file" data-id="p49" aria-label="選擇照片 9" onchange="pv(this, 'stg-p13')"></div>
                 <div class="photo-box-edit"><span>📷10</span><img src=""><input type="file" data-id="p50" aria-label="選擇照片 10" onchange="pv(this, 'stg-p13')"></div>
             </div>
-            <fieldset class="assessment-field"><legend>便便數量</legend><label class="count-label">大便 <input type="number" id="poop-count" min="0" step="1" inputmode="numeric" placeholder="份數" aria-label="大便份數" oninput="syncText()"> 份</label></fieldset><div class="urine-row"><label class="count-label">尿塊 1 <input type="number" id="urine-count-1" min="0" step="1" inputmode="numeric" placeholder="塊數" aria-label="第 1 組尿塊數量" oninput="syncText()"> 塊</label><fieldset class="assessment-field"><legend>第 1 組尿塊大小</legend><div class="choice-row"><label class="choice-pill"><input type="radio" name="urine-size-1" value="大型" onchange="syncText()"><span>大型</span></label><label class="choice-pill"><input type="radio" name="urine-size-1" value="中大型" onchange="syncText()"><span>中大型</span></label><label class="choice-pill"><input type="radio" name="urine-size-1" value="中型" onchange="syncText()"><span>中型</span></label><label class="choice-pill"><input type="radio" name="urine-size-1" value="中小型" onchange="syncText()"><span>中小型</span></label><label class="choice-pill"><input type="radio" name="urine-size-1" value="小型" onchange="syncText()"><span>小型</span></label><button type="button" class="choice-clear" onclick="clearChoice('urine-size-1')">清除</button></div></fieldset></div><div class="urine-row"><label class="count-label">尿塊 2 <input type="number" id="urine-count-2" min="0" step="1" inputmode="numeric" placeholder="塊數" aria-label="第 2 組尿塊數量" oninput="syncText()"> 塊</label><fieldset class="assessment-field"><legend>第 2 組尿塊大小</legend><div class="choice-row"><label class="choice-pill"><input type="radio" name="urine-size-2" value="大型" onchange="syncText()"><span>大型</span></label><label class="choice-pill"><input type="radio" name="urine-size-2" value="中大型" onchange="syncText()"><span>中大型</span></label><label class="choice-pill"><input type="radio" name="urine-size-2" value="中型" onchange="syncText()"><span>中型</span></label><label class="choice-pill"><input type="radio" name="urine-size-2" value="中小型" onchange="syncText()"><span>中小型</span></label><label class="choice-pill"><input type="radio" name="urine-size-2" value="小型" onchange="syncText()"><span>小型</span></label><button type="button" class="choice-clear" onclick="clearChoice('urine-size-2')">清除</button></div></fieldset></div>
+            <fieldset class="assessment-field"><legend>便便數量</legend><label class="count-label">大便 <input type="number" id="poop-count" min="0" step="1" inputmode="numeric" placeholder="份數" aria-label="大便份數" oninput="syncText()"> 份</label></fieldset><div class="urine-row"><label class="count-label">尿塊 1 <input type="number" id="urine-count-1" min="0" step="1" inputmode="numeric" placeholder="塊數" aria-label="第 1 組尿塊數量" oninput="syncText()"> 塊</label><fieldset class="assessment-field"><legend>第 1 組尿塊大小</legend><div class="choice-row"><label class="choice-pill"><input type="radio" name="urine-size-1" value="大型" onchange="syncText()"><span>大型</span></label><label class="choice-pill"><input type="radio" name="urine-size-1" value="中大型" onchange="syncText()"><span>中大型</span></label><label class="choice-pill"><input type="radio" name="urine-size-1" value="中型" onchange="syncText()"><span>中型</span></label><label class="choice-pill"><input type="radio" name="urine-size-1" value="中小型" onchange="syncText()"><span>中小型</span></label><label class="choice-pill"><input type="radio" name="urine-size-1" value="小型" onchange="syncText()"><span>小型</span></label><button type="button" class="choice-clear" onclick="clearChoice('urine-size-1')">清除</button></div></fieldset><p id="urine-warning-1" class="field-warning" role="status" hidden></p></div><div class="urine-row"><label class="count-label">尿塊 2 <input type="number" id="urine-count-2" min="0" step="1" inputmode="numeric" placeholder="塊數" aria-label="第 2 組尿塊數量" oninput="syncText()"> 塊</label><fieldset class="assessment-field"><legend>第 2 組尿塊大小</legend><div class="choice-row"><label class="choice-pill"><input type="radio" name="urine-size-2" value="大型" onchange="syncText()"><span>大型</span></label><label class="choice-pill"><input type="radio" name="urine-size-2" value="中大型" onchange="syncText()"><span>中大型</span></label><label class="choice-pill"><input type="radio" name="urine-size-2" value="中型" onchange="syncText()"><span>中型</span></label><label class="choice-pill"><input type="radio" name="urine-size-2" value="中小型" onchange="syncText()"><span>中小型</span></label><label class="choice-pill"><input type="radio" name="urine-size-2" value="小型" onchange="syncText()"><span>小型</span></label><button type="button" class="choice-clear" onclick="clearChoice('urine-size-2')">清除</button></div></fieldset><p id="urine-warning-2" class="field-warning" role="status" hidden></p></div>
             <textarea id="i-p" rows="2" placeholder="詳細描述..." oninput="syncText()"></textarea>
             <span class="field-label">💊 醫囑與保健品執行</span>
             <div class="photo-grid-edit">
@@ -367,7 +372,7 @@
             document.querySelectorAll('.tag-btn').forEach(b => b.classList.toggle('active', (draft.tags || []).includes(b.innerText)));
             document.querySelectorAll('.assessment-field input[type="radio"], .assessment-field input[type="checkbox"], input[name="garbage"]').forEach(input => {
                 input.checked = (draft.choices || []).some(([name,value]) => {
-                    const renamedFoodActions = {'已給新罐罐':'已給新濕食','已加水':'濕食已加水','已加保養品':'濕食已加保養品'};
+                    const renamedFoodActions = {'已給新罐罐':'已給新濕食','已加水':'濕食已加水','已加保養品':'濕食已加保健品','濕食已加保養品':'濕食已加保健品'};
                     const savedValue = name === 'food-actions' ? (renamedFoodActions[value] || value) : value;
                     return name === input.name && savedValue === input.value;
                 });
@@ -423,18 +428,40 @@
         return /^\d+$/.test(value) && input.validity.valid && Number.isSafeInteger(Number(value)) ? String(Number(value)) : null;
     }
     function renderCareOptions() {
-        const food = [];
-        const dry = chosen('food-remaining'), can = chosen('can-remaining');
-        if (dry) food.push('抵達時飼料剩餘量：' + dry);
-        if (can) food.push('抵達時罐頭剩餘量：' + can);
-        food.push(...checkedValues('food-actions').map(value => '✅' + value));
-        renderDetails('stg-f-options',food);
+        const target = document.getElementById('stg-f-options');
+        target.replaceChildren();
+        for (const [key,label,remainingName] of [
+            ['utensils','餐具',null], ['dry','飼料','food-remaining'], ['wet','濕食','can-remaining']
+        ]) {
+            const remaining = remainingName ? chosen(remainingName) : '';
+            const values = Array.from(document.querySelectorAll('[data-food-group="' + key + '"] input[name="food-actions"]:checked')).map(input => input.value);
+            if (!remaining && !values.length) continue;
+            const section = document.createElement('section'); section.className = 'food-group-final';
+            const heading = document.createElement('h3'); heading.innerText = label; section.appendChild(heading);
+            if (remaining) {
+                const line = document.createElement('div');
+                line.innerText = remaining === '已吃完' ? '抵達時已吃完' : '抵達時剩餘：' + remaining;
+                section.appendChild(line);
+            }
+            if (values.length) {
+                const line = document.createElement('div');
+                line.innerText = '✅ ' + values.map(value => key === 'wet' ? value.replace(/^濕食已/, '已') : value).join('、');
+                section.appendChild(line);
+            }
+            target.appendChild(section);
+        }
+        target.hidden = target.children.length === 0;
+        const note = document.getElementById('i-f').value;
+        document.getElementById('stg-f').innerText = note.trim() ? '補充說明：\n' + note : '';
         renderDetails('stg-w-options',checkedValues('water-actions').map(value => '✅' + value));
         const toilet = [], poop = validCount('poop-count');
         if (poop !== null) toilet.push('大便：' + poop + ' 份');
         const urine = [];
         for (let i = 1; i <= 2; i++) {
             const count = validCount('urine-count-' + i), size = chosen('urine-size-' + i);
+            const warning = document.getElementById('urine-warning-' + i);
+            warning.hidden = !size || count !== null;
+            warning.innerText = warning.hidden ? '' : '已選大小，請補上尿塊數量（0 或以上的整數）。';
             if (count !== null) urine.push(count + ' 塊' + (count !== '0' && size ? '（' + size + '）' : ''));
         }
         if (urine.length) toilet.push('尿塊：' + urine.join('、'));

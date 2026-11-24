@@ -102,6 +102,36 @@
         .food-group-final { margin-bottom:16px; }
         .food-group-final h3 { margin:0 0 4px; font-size:20px; color:var(--m-purple); }
         .field-warning { font-size:14px; line-height:1.6; color:#8A4C30; margin:10px 0 0; }
+        /* Editing controls only: keep the exported report styles unchanged. */
+        .editor-container .safety-checks { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; align-items:stretch; }
+        .editor-container .safety-checks .tag-btn,
+        .editor-container .safety-checks .choice-pill,
+        .editor-container .safety-options .choice-pill {
+            position:relative; display:flex; align-items:center; justify-content:center; box-sizing:border-box;
+            min-height:46px; padding:10px 8px; margin:0; border:1px solid #E0D7EA; border-radius:14px;
+            background:var(--m-bg); color:var(--m-purple); font-family:inherit; font-size:14px;
+            line-height:1.5; text-align:center; cursor:pointer; overflow-wrap:anywhere;
+        }
+        .editor-container .safety-checks .tag-btn.active,
+        .editor-container .safety-checks .choice-pill:has(input:checked),
+        .editor-container .safety-options .choice-pill:has(input:checked) {
+            background:var(--m-purple); border-color:var(--m-purple); color:white;
+        }
+        .editor-container .safety-checks input,
+        .editor-container .safety-options .choice-pill input {
+            position:absolute; width:1px; height:1px; padding:0; margin:0; opacity:0;
+        }
+        .editor-container .safety-checks .choice-pill:has(input:focus-visible),
+        .editor-container .safety-options .choice-pill:has(input:focus-visible) {
+            outline:2px solid var(--gold); outline-offset:3px;
+        }
+        .editor-container .safety-options {
+            margin:20px 0 0; padding:12px; border:1px solid #E0D7EA; border-radius:16px;
+        }
+        .editor-container .safety-options legend { padding:0 5px; margin-bottom:4px; }
+        .editor-container .safety-options .choice-row { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+        .editor-container .safety-options .choice-clear { grid-column:1 / -1; justify-self:end; min-height:28px; padding:2px 4px; }
+        .editor-container .safety-options + #i-sa { margin-top:16px; }
     </style>
 </head>
 <body>
@@ -223,14 +253,14 @@
                 <div class="photo-box-edit ratio-43"><span>查核📷3</span><img src=""><input type="file" data-id="p34" onchange="pv(this, 'stg-p32')"></div>
                 <div class="photo-box-edit ratio-43"><span>查核📷4</span><img src=""><input type="file" data-id="p35" onchange="pv(this, 'stg-p32')"></div>
             </div>
-            <div class="tag-container" style="margin-top:10px;">
+            <div class="tag-container safety-checks" style="margin-top:10px;">
                 <div class="tag-btn" onclick="tg(this)">✅玩具零食已收好</div><div class="tag-btn" onclick="tg(this)">✅電器安全巡查</div><div class="tag-btn" onclick="tg(this)">✅門窗鎖閉確認</div><label class="choice-pill"><input type="checkbox" name="garbage" value="垃圾已打包帶走" onchange="syncText()"><span>✅垃圾已打包帶走</span></label>
             </div>
-            <fieldset class="assessment-field"><legend>✅環境清潔</legend><div class="choice-row">
+            <fieldset class="assessment-field safety-options"><legend>✅環境清潔</legend><div class="choice-row">
                 <label class="choice-pill"><input type="checkbox" name="cleaning" value="已吸塵" onchange="syncText()"><span>已吸塵</span></label>
                 <label class="choice-pill"><input type="checkbox" name="cleaning" value="已掃地" onchange="syncText()"><span>已掃地</span></label>
             </div></fieldset>
-            <fieldset class="assessment-field"><legend>🏠室內溫濕舒適度</legend><div class="choice-row"><label class="choice-pill"><input type="radio" name="comfort" value="良好" onchange="syncText()"><span>良好</span></label><label class="choice-pill"><input type="radio" name="comfort" value="微悶熱" onchange="syncText()"><span>微悶熱</span></label><button type="button" class="choice-clear" onclick="clearChoice('comfort')">清除</button></div></fieldset>
+            <fieldset class="assessment-field safety-options"><legend>🏠室內溫濕舒適度</legend><div class="choice-row"><label class="choice-pill"><input type="radio" name="comfort" value="良好" onchange="syncText()"><span>良好</span></label><label class="choice-pill"><input type="radio" name="comfort" value="微悶熱" onchange="syncText()"><span>微悶熱</span></label><button type="button" class="choice-clear" onclick="clearChoice('comfort')">清除</button></div></fieldset>
 
             <textarea id="i-sa" rows="2" placeholder="補充說明..." oninput="syncText()"></textarea>
             <div class="btn-stack">

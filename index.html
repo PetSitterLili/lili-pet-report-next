@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="denicon.png">
-    <title>ㄌㄌ 照護日誌 V7.3 測試版</title>
+    <title>ㄌㄌ 照護日誌 V7.3.1 測試版</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;700&family=Cormorant+Garamond:ital,wght@1,600&display=swap" rel="stylesheet">
     <style>
@@ -42,24 +42,24 @@
         .info-bar-final { display: flex; justify-content: space-between; margin-bottom: 25px; font-size: 18px; color: var(--m-purple); border-bottom: 1px dashed #E0D7EA; padding-bottom: 8px; }
         .report-grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 20px; }
         .col-section { background: white; border-radius: 25px; padding: 25px; border: 1px solid rgba(109,91,142,0.06); position: relative; display: flex; flex-direction: column; }
-        
+
         .whisper-box { background: var(--milk-tea-gradient); border-radius: 20px; padding: 20px; margin-top: 20px; position: relative; }
-        .whisper-box .text-content-final { padding-right: 115px !important; padding-bottom: 10px; font-weight:700; min-height: 120px; } 
-        
+        .whisper-box .text-content-final { padding-right: 115px !important; padding-bottom: 10px; font-weight:700; min-height: 120px; }
+
         .report-title-final { font-weight: 700; font-size: 21px; color: var(--m-purple); margin-bottom: 16px; display: flex; align-items: center; }
         .report-title-final::before { content: ""; width: 6px; height: 24px; background: var(--gold); margin-right: 12px; border-radius: 3px; }
         .photo-grid-final { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
-        
+
         #stg-p32-wrap, #stg-p37-wrap { display: flex; flex-direction: column; gap: 15px; margin-bottom: 15px; }
         .photo-box-final { width: 100%; aspect-ratio: 3/4; border-radius: 15px; overflow: hidden; background: #F8F8F8; display: none; }
         .photo-box-final.ratio-43 { aspect-ratio: 4 / 3; }
         .photo-box-final img { width: 100%; height: 100%; object-fit: cover; }
-        
+
         /* 核心修復：為前兩頁的文字區塊加上貓咪避讓空間 */
         .text-content-final { font-size: 18px; line-height: 1.8; color: #333; white-space: pre-wrap; min-height: 40px; padding-bottom: 90px; padding-right: 125px; }
-        
+
         .cat-deco { position: absolute; right: 5px; bottom: 5px; width: 130px; height: auto; z-index: 10; }
-        
+
         .footer-final { margin-top: auto; padding-top: 30px; border-top: 1.5px solid var(--m-bg); display: flex; justify-content: space-between; align-items: flex-end; }
         .slogan-final { font-weight: 700; font-size: 19px; color: var(--m-purple-light); max-width: 650px; line-height: 1.4; font-style: italic; opacity: 0.75; }
         .ig-area-final { text-align: right; color: var(--m-purple); font-size: 13px; font-weight: 700; }
@@ -91,12 +91,18 @@
         .star-rating:has(input[value="3"]:checked) .star-choice:nth-child(-n+3) span { color:var(--gold); }
         .star-rating:has(input[value="4"]:checked) .star-choice:nth-child(-n+4) span { color:var(--gold); }
         .star-rating:has(input[value="5"]:checked) .star-choice:nth-child(-n+5) span { color:var(--gold); }
+        .selected-details-final { font-size:18px; line-height:1.8; margin-bottom:14px; }
+        .count-label { display:flex; align-items:center; gap:8px; color:var(--m-purple); font-size:14px; }
+        .count-label input { width:100px; min-width:0; padding:10px; border:1.5px solid #E0D7EA; border-radius:12px; background:var(--m-bg); font:inherit; box-sizing:border-box; }
+        .urine-row { margin:14px 0; padding:12px; background:#FAF8FC; border-radius:12px; }
+        .urine-row .assessment-field { margin-bottom:0; }
+        .tag-container .choice-pill { margin:2px; }
     </style>
 </head>
 <body>
     <div class="ui-header">
         <h1>嘉義寵物保姆 ㄌㄌ</h1>
-        <p>PET CARE SERVICE LOG • WORKSTATION V7.3 · 測試版</p>
+        <p>PET CARE SERVICE LOG • WORKSTATION V7.3.1 · 測試版</p>
     </div>
     <div class="editor-container">
         <div class="editor-section">
@@ -108,7 +114,7 @@
                 <option value="ㄌㄌ & Tiffany">負責保姆：ㄌㄌ & Tiffany</option>
             </select>
         </div>
-        
+
         <div class="editor-section">
             <div class="editor-title">🥣 CHAPTER 01：飲食與補水</div>
             <span class="field-label">🍴 飲食管理紀錄</span>
@@ -124,6 +130,7 @@
                 <div class="photo-box-edit"><span>📷9</span><img src=""><input type="file" data-id="p41" aria-label="選擇照片 9" onchange="pv(this, 'stg-p1')"></div>
                 <div class="photo-box-edit"><span>📷10</span><img src=""><input type="file" data-id="p42" aria-label="選擇照片 10" onchange="pv(this, 'stg-p1')"></div>
             </div>
+            <fieldset class="assessment-field"><legend>抵達時飼料剩餘量</legend><div class="choice-row"><label class="choice-pill"><input type="radio" name="food-remaining" value="已吃完" onchange="syncText()"><span>已吃完</span></label><label class="choice-pill"><input type="radio" name="food-remaining" value="極少量" onchange="syncText()"><span>極少量</span></label><label class="choice-pill"><input type="radio" name="food-remaining" value="中等" onchange="syncText()"><span>中等</span></label><label class="choice-pill"><input type="radio" name="food-remaining" value="偏多" onchange="syncText()"><span>偏多</span></label><button type="button" class="choice-clear" onclick="clearChoice('food-remaining')">清除</button></div></fieldset><fieldset class="assessment-field"><legend>抵達時罐頭剩餘量</legend><div class="choice-row"><label class="choice-pill"><input type="radio" name="can-remaining" value="已吃完" onchange="syncText()"><span>已吃完</span></label><label class="choice-pill"><input type="radio" name="can-remaining" value="極少量" onchange="syncText()"><span>極少量</span></label><label class="choice-pill"><input type="radio" name="can-remaining" value="中等" onchange="syncText()"><span>中等</span></label><label class="choice-pill"><input type="radio" name="can-remaining" value="偏多" onchange="syncText()"><span>偏多</span></label><button type="button" class="choice-clear" onclick="clearChoice('can-remaining')">清除</button></div></fieldset><fieldset class="assessment-field"><legend>飲食照護</legend><div class="choice-row"><label class="choice-pill"><input type="checkbox" name="food-actions" value="已洗碗" onchange="syncText()"><span>已洗碗</span></label><label class="choice-pill"><input type="checkbox" name="food-actions" value="已擦乾" onchange="syncText()"><span>已擦乾</span></label><label class="choice-pill"><input type="checkbox" name="food-actions" value="已給新罐罐" onchange="syncText()"><span>已給新罐罐</span></label><label class="choice-pill"><input type="checkbox" name="food-actions" value="已加水" onchange="syncText()"><span>已加水</span></label><label class="choice-pill"><input type="checkbox" name="food-actions" value="已加保養品" onchange="syncText()"><span>已加保養品</span></label></div></fieldset>
             <textarea id="i-f" rows="2" placeholder="詳細描述..." oninput="syncText()"></textarea>
             <span class="field-label">💧 補水觀察紀錄</span>
             <div class="photo-grid-edit">
@@ -138,6 +145,7 @@
                 <div class="photo-box-edit"><span>📷9</span><img src=""><input type="file" data-id="p45" aria-label="選擇照片 9" onchange="pv(this, 'stg-p7')"></div>
                 <div class="photo-box-edit"><span>📷10</span><img src=""><input type="file" data-id="p46" aria-label="選擇照片 10" onchange="pv(this, 'stg-p7')"></div>
             </div>
+            <fieldset class="assessment-field"><legend>飲水照護</legend><div class="choice-row"><label class="choice-pill"><input type="checkbox" name="water-actions" value="已清洗" onchange="syncText()"><span>已清洗</span></label><label class="choice-pill"><input type="checkbox" name="water-actions" value="已擦乾" onchange="syncText()"><span>已擦乾</span></label><label class="choice-pill"><input type="checkbox" name="water-actions" value="已換新水" onchange="syncText()"><span>已換新水</span></label><label class="choice-pill"><input type="checkbox" name="water-actions" value="飲水機全機拆洗" onchange="syncText()"><span>飲水機全機拆洗</span></label><label class="choice-pill"><input type="checkbox" name="water-actions" value="飲水量很不錯喔" onchange="syncText()"><span>飲水量很不錯喔</span></label></div></fieldset>
             <textarea id="i-w" rows="2" placeholder="詳細描述..." oninput="syncText()"></textarea>
             <div class="btn-stack">
                 <button id="gen-1" class="btn btn-gen" onclick="generate(1)">🚀 產生第 01 頁高清圖</button>
@@ -160,6 +168,7 @@
                 <div class="photo-box-edit"><span>📷9</span><img src=""><input type="file" data-id="p49" aria-label="選擇照片 9" onchange="pv(this, 'stg-p13')"></div>
                 <div class="photo-box-edit"><span>📷10</span><img src=""><input type="file" data-id="p50" aria-label="選擇照片 10" onchange="pv(this, 'stg-p13')"></div>
             </div>
+            <fieldset class="assessment-field"><legend>便便數量</legend><label class="count-label">大便 <input type="number" id="poop-count" min="0" step="1" inputmode="numeric" placeholder="份數" aria-label="大便份數" oninput="syncText()"> 份</label></fieldset><div class="urine-row"><label class="count-label">尿塊 1 <input type="number" id="urine-count-1" min="0" step="1" inputmode="numeric" placeholder="塊數" aria-label="第 1 組尿塊數量" oninput="syncText()"> 塊</label><fieldset class="assessment-field"><legend>第 1 組尿塊大小</legend><div class="choice-row"><label class="choice-pill"><input type="radio" name="urine-size-1" value="大型" onchange="syncText()"><span>大型</span></label><label class="choice-pill"><input type="radio" name="urine-size-1" value="中大型" onchange="syncText()"><span>中大型</span></label><label class="choice-pill"><input type="radio" name="urine-size-1" value="中型" onchange="syncText()"><span>中型</span></label><label class="choice-pill"><input type="radio" name="urine-size-1" value="中小型" onchange="syncText()"><span>中小型</span></label><label class="choice-pill"><input type="radio" name="urine-size-1" value="小型" onchange="syncText()"><span>小型</span></label><button type="button" class="choice-clear" onclick="clearChoice('urine-size-1')">清除</button></div></fieldset></div><div class="urine-row"><label class="count-label">尿塊 2 <input type="number" id="urine-count-2" min="0" step="1" inputmode="numeric" placeholder="塊數" aria-label="第 2 組尿塊數量" oninput="syncText()"> 塊</label><fieldset class="assessment-field"><legend>第 2 組尿塊大小</legend><div class="choice-row"><label class="choice-pill"><input type="radio" name="urine-size-2" value="大型" onchange="syncText()"><span>大型</span></label><label class="choice-pill"><input type="radio" name="urine-size-2" value="中大型" onchange="syncText()"><span>中大型</span></label><label class="choice-pill"><input type="radio" name="urine-size-2" value="中型" onchange="syncText()"><span>中型</span></label><label class="choice-pill"><input type="radio" name="urine-size-2" value="中小型" onchange="syncText()"><span>中小型</span></label><label class="choice-pill"><input type="radio" name="urine-size-2" value="小型" onchange="syncText()"><span>小型</span></label><button type="button" class="choice-clear" onclick="clearChoice('urine-size-2')">清除</button></div></fieldset></div>
             <textarea id="i-p" rows="2" placeholder="詳細描述..." oninput="syncText()"></textarea>
             <span class="field-label">💊 醫囑與保健品執行</span>
             <div class="photo-grid-edit">
@@ -169,7 +178,7 @@
                 <div class="photo-box-edit"><span>📷4</span><img src=""><input type="file" data-id="p22" aria-label="選擇照片 4" onchange="pv(this, 'stg-p19')"></div>
             </div>
             <textarea id="i-m" rows="2" placeholder="詳細描述..." oninput="syncText()"></textarea>
-            <div class="assessment-editor"><div class="editor-title">🐾 毛寶今日狀態觀察</div><fieldset class="assessment-field"><legend>精神活力狀態</legend><div class="choice-row star-rating"><label class="choice-pill star-choice" title="1 顆星"><input type="radio" name="energy" value="1" aria-label="1 顆星" onchange="syncText()"><span>★</span></label><label class="choice-pill star-choice" title="2 顆星"><input type="radio" name="energy" value="2" aria-label="2 顆星" onchange="syncText()"><span>★</span></label><label class="choice-pill star-choice" title="3 顆星"><input type="radio" name="energy" value="3" aria-label="3 顆星" onchange="syncText()"><span>★</span></label><label class="choice-pill star-choice" title="4 顆星"><input type="radio" name="energy" value="4" aria-label="4 顆星" onchange="syncText()"><span>★</span></label><label class="choice-pill star-choice" title="5 顆星"><input type="radio" name="energy" value="5" aria-label="5 顆星" onchange="syncText()"><span>★</span></label><button type="button" class="choice-clear" onclick="clearChoice('energy')">清除</button></div></fieldset><fieldset class="assessment-field"><legend>有無嘔吐</legend><div class="choice-row"><label class="choice-pill"><input type="radio" name="vomit" value="有" onchange="syncText()"><span>有</span></label><label class="choice-pill"><input type="radio" name="vomit" value="無" onchange="syncText()"><span>無</span></label><button type="button" class="choice-clear" onclick="clearChoice('vomit')">清除</button></div></fieldset><fieldset class="assessment-field"><legend>便溺排泄狀態</legend><div class="choice-row"><label class="choice-pill"><input type="radio" name="toilet" value="正常" onchange="syncText()"><span>正常</span></label><label class="choice-pill"><input type="radio" name="toilet" value="微軟便" onchange="syncText()"><span>微軟便</span></label><label class="choice-pill"><input type="radio" name="toilet" value="軟便拉稀" onchange="syncText()"><span>軟便拉稀</span></label><label class="choice-pill"><input type="radio" name="toilet" value="量少偏乾" onchange="syncText()"><span>量少偏乾</span></label><button type="button" class="choice-clear" onclick="clearChoice('toilet')">清除</button></div></fieldset><fieldset class="assessment-field"><legend>食慾狀態</legend><div class="choice-row star-rating"><label class="choice-pill star-choice" title="1 顆星"><input type="radio" name="appetite" value="1" aria-label="1 顆星" onchange="syncText()"><span>★</span></label><label class="choice-pill star-choice" title="2 顆星"><input type="radio" name="appetite" value="2" aria-label="2 顆星" onchange="syncText()"><span>★</span></label><label class="choice-pill star-choice" title="3 顆星"><input type="radio" name="appetite" value="3" aria-label="3 顆星" onchange="syncText()"><span>★</span></label><label class="choice-pill star-choice" title="4 顆星"><input type="radio" name="appetite" value="4" aria-label="4 顆星" onchange="syncText()"><span>★</span></label><label class="choice-pill star-choice" title="5 顆星"><input type="radio" name="appetite" value="5" aria-label="5 顆星" onchange="syncText()"><span>★</span></label><button type="button" class="choice-clear" onclick="clearChoice('appetite')">清除</button></div></fieldset><fieldset class="assessment-field"><legend>心情</legend><div class="choice-row star-rating"><label class="choice-pill star-choice" title="1 顆星"><input type="radio" name="mood" value="1" aria-label="1 顆星" onchange="syncText()"><span>★</span></label><label class="choice-pill star-choice" title="2 顆星"><input type="radio" name="mood" value="2" aria-label="2 顆星" onchange="syncText()"><span>★</span></label><label class="choice-pill star-choice" title="3 顆星"><input type="radio" name="mood" value="3" aria-label="3 顆星" onchange="syncText()"><span>★</span></label><label class="choice-pill star-choice" title="4 顆星"><input type="radio" name="mood" value="4" aria-label="4 顆星" onchange="syncText()"><span>★</span></label><label class="choice-pill star-choice" title="5 顆星"><input type="radio" name="mood" value="5" aria-label="5 顆星" onchange="syncText()"><span>★</span></label><button type="button" class="choice-clear" onclick="clearChoice('mood')">清除</button></div></fieldset></div>
+            <div class="assessment-editor"><div class="editor-title">🐾 毛寶今日狀態觀察</div><fieldset class="assessment-field"><legend>精神活力狀態</legend><div class="choice-row star-rating"><label class="choice-pill star-choice" title="1 顆星"><input type="radio" name="energy" value="1" aria-label="1 顆星" onchange="syncText()"><span>★</span></label><label class="choice-pill star-choice" title="2 顆星"><input type="radio" name="energy" value="2" aria-label="2 顆星" onchange="syncText()"><span>★</span></label><label class="choice-pill star-choice" title="3 顆星"><input type="radio" name="energy" value="3" aria-label="3 顆星" onchange="syncText()"><span>★</span></label><label class="choice-pill star-choice" title="4 顆星"><input type="radio" name="energy" value="4" aria-label="4 顆星" onchange="syncText()"><span>★</span></label><label class="choice-pill star-choice" title="5 顆星"><input type="radio" name="energy" value="5" aria-label="5 顆星" onchange="syncText()"><span>★</span></label><button type="button" class="choice-clear" onclick="clearChoice('energy')">清除</button></div></fieldset><fieldset class="assessment-field"><legend>食慾狀態</legend><div class="choice-row star-rating"><label class="choice-pill star-choice" title="1 顆星"><input type="radio" name="appetite" value="1" aria-label="1 顆星" onchange="syncText()"><span>★</span></label><label class="choice-pill star-choice" title="2 顆星"><input type="radio" name="appetite" value="2" aria-label="2 顆星" onchange="syncText()"><span>★</span></label><label class="choice-pill star-choice" title="3 顆星"><input type="radio" name="appetite" value="3" aria-label="3 顆星" onchange="syncText()"><span>★</span></label><label class="choice-pill star-choice" title="4 顆星"><input type="radio" name="appetite" value="4" aria-label="4 顆星" onchange="syncText()"><span>★</span></label><label class="choice-pill star-choice" title="5 顆星"><input type="radio" name="appetite" value="5" aria-label="5 顆星" onchange="syncText()"><span>★</span></label><button type="button" class="choice-clear" onclick="clearChoice('appetite')">清除</button></div></fieldset><fieldset class="assessment-field"><legend>心情</legend><div class="choice-row star-rating"><label class="choice-pill star-choice" title="1 顆星"><input type="radio" name="mood" value="1" aria-label="1 顆星" onchange="syncText()"><span>★</span></label><label class="choice-pill star-choice" title="2 顆星"><input type="radio" name="mood" value="2" aria-label="2 顆星" onchange="syncText()"><span>★</span></label><label class="choice-pill star-choice" title="3 顆星"><input type="radio" name="mood" value="3" aria-label="3 顆星" onchange="syncText()"><span>★</span></label><label class="choice-pill star-choice" title="4 顆星"><input type="radio" name="mood" value="4" aria-label="4 顆星" onchange="syncText()"><span>★</span></label><label class="choice-pill star-choice" title="5 顆星"><input type="radio" name="mood" value="5" aria-label="5 顆星" onchange="syncText()"><span>★</span></label><button type="button" class="choice-clear" onclick="clearChoice('mood')">清除</button></div></fieldset><fieldset class="assessment-field"><legend>有無嘔吐</legend><div class="choice-row"><label class="choice-pill"><input type="radio" name="vomit" value="有" onchange="syncText()"><span>有</span></label><label class="choice-pill"><input type="radio" name="vomit" value="無" onchange="syncText()"><span>無</span></label><button type="button" class="choice-clear" onclick="clearChoice('vomit')">清除</button></div></fieldset><fieldset class="assessment-field"><legend>便溺排泄狀態</legend><div class="choice-row"><label class="choice-pill"><input type="radio" name="toilet" value="正常" onchange="syncText()"><span>正常</span></label><label class="choice-pill"><input type="radio" name="toilet" value="微軟便" onchange="syncText()"><span>微軟便</span></label><label class="choice-pill"><input type="radio" name="toilet" value="軟便拉稀" onchange="syncText()"><span>軟便拉稀</span></label><label class="choice-pill"><input type="radio" name="toilet" value="量少偏乾" onchange="syncText()"><span>量少偏乾</span></label><button type="button" class="choice-clear" onclick="clearChoice('toilet')">清除</button></div></fieldset></div>
             <div class="btn-stack">
                 <button id="gen-2" class="btn btn-gen" onclick="generate(2)">🚀 產生第 02 頁高清圖</button>
                 <button id="dl-2" class="btn btn-dl" onclick="trigDL(2)">📥 下載</button>
@@ -199,7 +208,7 @@
                 <div class="photo-box-edit"><span>追加豎照📷1</span><img src=""><input type="file" data-id="p37" onchange="pv(this, 'stg-p37')"></div>
                 <div class="photo-box-edit"><span>追加豎照📷2</span><img src=""><input type="file" data-id="p38" onchange="pv(this, 'stg-p37')"></div>
             </div>
-            
+
             <textarea id="i-b" rows="2" placeholder="互動詳細描述..." oninput="syncText()"></textarea>
             <textarea id="i-t" rows="3" placeholder="💌 ㄌㄌ 想對毛爸媽說的悄悄話..." oninput="syncText()" style="border: 2px solid var(--gold); margin-top:10px;"></textarea>
             <span class="field-label">🛡️ 安全衛生驗收 (單列大圖版)</span>
@@ -210,14 +219,14 @@
                 <div class="photo-box-edit ratio-43"><span>查核📷4</span><img src=""><input type="file" data-id="p35" onchange="pv(this, 'stg-p32')"></div>
             </div>
             <div class="tag-container" style="margin-top:10px;">
-                <div class="tag-btn" onclick="tg(this)">✅玩具零食已收好</div><div class="tag-btn" onclick="tg(this)">✅電器安全巡查</div><div class="tag-btn" onclick="tg(this)">✅門窗鎖閉確認</div>
+                <div class="tag-btn" onclick="tg(this)">✅玩具零食已收好</div><div class="tag-btn" onclick="tg(this)">✅電器安全巡查</div><div class="tag-btn" onclick="tg(this)">✅門窗鎖閉確認</div><label class="choice-pill"><input type="checkbox" name="garbage" value="垃圾已打包帶走" onchange="syncText()"><span>✅垃圾已打包帶走</span></label>
             </div>
-            <fieldset class="assessment-field"><legend>環境清潔</legend><div class="choice-row">
+            <fieldset class="assessment-field"><legend>✅環境清潔</legend><div class="choice-row">
                 <label class="choice-pill"><input type="checkbox" name="cleaning" value="已吸塵" onchange="syncText()"><span>已吸塵</span></label>
                 <label class="choice-pill"><input type="checkbox" name="cleaning" value="已掃地" onchange="syncText()"><span>已掃地</span></label>
             </div></fieldset>
-            <fieldset class="assessment-field"><legend>室內溫濕舒適度</legend><div class="choice-row"><label class="choice-pill"><input type="radio" name="comfort" value="良好" onchange="syncText()"><span>良好</span></label><label class="choice-pill"><input type="radio" name="comfort" value="微悶熱" onchange="syncText()"><span>微悶熱</span></label><button type="button" class="choice-clear" onclick="clearChoice('comfort')">清除</button></div></fieldset>
-            <label class="choice-pill"><input type="checkbox" name="garbage" value="垃圾已打包帶走" onchange="syncText()"><span>垃圾已打包帶走</span></label>
+            <fieldset class="assessment-field"><legend>🏠室內溫濕舒適度</legend><div class="choice-row"><label class="choice-pill"><input type="radio" name="comfort" value="良好" onchange="syncText()"><span>良好</span></label><label class="choice-pill"><input type="radio" name="comfort" value="微悶熱" onchange="syncText()"><span>微悶熱</span></label><button type="button" class="choice-clear" onclick="clearChoice('comfort')">清除</button></div></fieldset>
+
             <textarea id="i-sa" rows="2" placeholder="補充說明..." oninput="syncText()"></textarea>
             <div class="btn-stack">
                 <button id="gen-3" class="btn btn-gen" onclick="generate(3)">🚀 產生第 03 頁高清圖</button>
@@ -232,8 +241,8 @@
             <div class="header-final"><h1>嘉義寵物保姆 ㄌㄌ ∥ 到府服務日誌</h1><div class="chapter-tag">Chapter 01. Nutrition & Hydration</div></div>
             <div class="info-bar-final"><span class="h-sync"></span><span class="h-date"></span></div>
             <div class="report-grid-2col">
-                <div class="col-section"><div class="report-title-final">🍴 飲食管理紀錄</div><div class="photo-grid-final" id="stg-p1"></div><div class="text-content-final" id="stg-f"></div><img src="cat_black.png" class="cat-deco"></div>
-                <div class="col-section"><div class="report-title-final">💧 補水觀察紀錄</div><div class="photo-grid-final" id="stg-p7"></div><div class="text-content-final" id="stg-w"></div><img src="cat_striped.png" class="cat-deco"></div>
+                <div class="col-section"><div class="report-title-final">🍴 飲食管理紀錄</div><div class="photo-grid-final" id="stg-p1"></div><div class="selected-details-final" id="stg-f-options" hidden></div><div class="text-content-final" id="stg-f"></div><img src="cat_black.png" class="cat-deco"></div>
+                <div class="col-section"><div class="report-title-final">💧 補水觀察紀錄</div><div class="photo-grid-final" id="stg-p7"></div><div class="selected-details-final" id="stg-w-options" hidden></div><div class="text-content-final" id="stg-w"></div><img src="cat_striped.png" class="cat-deco"></div>
             </div>
             <div class="footer-final"><div class="slogan-final">「慢步調陪伴，讓孩子在咀嚼與吞嚥間感受最溫柔的守護。」</div><div class="ig-area-final">歡迎追蹤ㄌㄌ，因為你家小寶貝可能會上鏡頭喔！<br><img src="ig.png"></div></div>
         </div>
@@ -241,7 +250,7 @@
             <div class="header-final"><h1>嘉義寵物保姆 ㄌㄌ ∥ 到府服務日誌</h1><div class="chapter-tag">Chapter 02. Health & Medical Care</div></div>
             <div class="info-bar-final"><span class="h-sync"></span><span class="h-date"></span></div>
             <div class="report-grid-2col">
-                <div class="col-section"><div class="report-title-final">💩 健康排泄監測</div><div class="photo-grid-final" id="stg-p13"></div><div class="text-content-final" id="stg-p"></div><img src="cat_orange.png" class="cat-deco"></div>
+                <div class="col-section"><div class="report-title-final">💩 健康排泄監測</div><div class="photo-grid-final" id="stg-p13"></div><div class="selected-details-final" id="stg-p-options" hidden></div><div class="text-content-final" id="stg-p"></div><img src="cat_orange.png" class="cat-deco"></div>
                 <div class="col-section"><div class="report-title-final">💊 醫囑與保健品執行</div><div class="photo-grid-final" id="stg-p19"></div><div class="text-content-final" id="stg-m"></div><div id="stg-assessment" class="assessment-final" hidden></div></div>
             </div>
             <div class="footer-final"><div class="slogan-final">「細膩的監測，是為了陪孩子走更長、更遠、更穩的路。」</div><div class="ig-area-final">歡迎追蹤ㄌㄌ，因為你家小寶貝可能會上鏡頭喔！<br><img src="ig.png"></div></div>
@@ -262,7 +271,7 @@
                     <div id="stg-p32-wrap"></div>
                     <div id="stg-tags" style="margin-top:10px;"></div>
                     <div class="text-content-final" id="stg-sa" style="font-size:16px; border-top:1px dashed #DDD; padding-top:15px; color:var(--gold); margin-top:10px; padding-right: 0;"></div>
-                    
+
                     <div class="whisper-box">
                         <div class="report-title-final">💌 ㄌㄌ想對毛爸媽說的悄悄話</div>
                         <div class="text-content-final" id="stg-t"></div>
@@ -277,10 +286,10 @@
 <script>
     const STORAGE_KEY = 'lili-report-next:v1:draft';
     const dbName = 'LiliReportNext_V1';
-    const fields = ['i-h','i-f','i-w','i-p','i-m','i-b','i-t','i-sa','i-s'];
+    const fields = ['i-h','i-f','i-w','i-p','i-m','i-b','i-t','i-sa','i-s','poop-count','urine-count-1','urine-count-2'];
     const assessments = [
-        ['energy','精神活力狀態',true], ['vomit','有無嘔吐',false],
-        ['toilet','便溺排泄狀態',false], ['appetite','食慾狀態',true], ['mood','心情',true]
+        ['energy','精神活力狀態',true], ['appetite','食慾狀態',true], ['mood','心情',true],
+        ['vomit','有無嘔吐',false], ['toilet','便溺排泄狀態',false]
     ];
     let db, pageBlobs = {}, ready = false, revision = 0;
     const photoInputs = Array.from(document.querySelectorAll('.photo-box-edit input'));
@@ -356,7 +365,7 @@
         if (draft) {
             fields.forEach(id => { if (typeof draft.fields?.[id] === 'string') document.getElementById(id).value = draft.fields[id]; });
             document.querySelectorAll('.tag-btn').forEach(b => b.classList.toggle('active', (draft.tags || []).includes(b.innerText)));
-            document.querySelectorAll('.assessment-field input, input[name="garbage"]').forEach(input => {
+            document.querySelectorAll('.assessment-field input[type="radio"], .assessment-field input[type="checkbox"], input[name="garbage"]').forEach(input => {
                 input.checked = (draft.choices || []).some(([name,value]) => name === input.name && value === input.value);
             });
         }
@@ -381,11 +390,11 @@
         document.getElementById('stg-sa').innerText = document.getElementById('i-sa').value ? '補充說明：' + document.getElementById('i-sa').value : '';
         const tagBox = document.getElementById('stg-tags'); tagBox.replaceChildren();
         document.querySelectorAll('.tag-btn.active').forEach(t => addBadge(tagBox,t.innerText));
+        if (document.querySelector('input[name="garbage"]:checked')) addBadge(tagBox,'✅垃圾已打包帶走');
         const cleaning = Array.from(document.querySelectorAll('input[name="cleaning"]:checked')).map(x => x.value);
-        if (cleaning.length) addBadge(tagBox,'環境清潔：' + cleaning.join('、'));
+        if (cleaning.length) addBadge(tagBox,'✅環境清潔：' + cleaning.join('、'));
         const comfort = document.querySelector('input[name="comfort"]:checked');
-        if (comfort) addBadge(tagBox,'室內溫濕舒適度：' + comfort.value);
-        if (document.querySelector('input[name="garbage"]:checked')) addBadge(tagBox,'垃圾已打包帶走');
+        if (comfort) addBadge(tagBox,'🏠室內溫濕舒適度：' + comfort.value);
         const summary = document.getElementById('stg-assessment'); summary.replaceChildren();
         const selected = assessments.map(([name,label,stars]) => {
             const choice = document.querySelector(`input[name="${name}"]:checked`);
@@ -396,7 +405,36 @@
             const title = document.createElement('h2'); title.innerText = '🐾 毛寶今日狀態觀察'; summary.appendChild(title);
             selected.forEach(([label,value]) => { const row = document.createElement('div'); row.innerText = `${label}：${value}`; summary.appendChild(row); });
         }
+        renderCareOptions();
         if (save) persistDraft();
+    }
+    function chosen(name) { return document.querySelector('input[name="' + name + '"]:checked')?.value || ''; }
+    function checkedValues(name) { return Array.from(document.querySelectorAll('input[name="' + name + '"]:checked')).map(i => i.value); }
+    function renderDetails(id, lines) {
+        const target = document.getElementById(id); target.replaceChildren(); target.hidden = lines.length === 0;
+        lines.forEach(text => { const line = document.createElement('div'); line.innerText = text; target.appendChild(line); });
+    }
+    function validCount(id) {
+        const input = document.getElementById(id), value = input.value;
+        return /^\d+$/.test(value) && input.validity.valid && Number.isSafeInteger(Number(value)) ? String(Number(value)) : null;
+    }
+    function renderCareOptions() {
+        const food = [];
+        const dry = chosen('food-remaining'), can = chosen('can-remaining');
+        if (dry) food.push('抵達時飼料剩餘量：' + dry);
+        if (can) food.push('抵達時罐頭剩餘量：' + can);
+        food.push(...checkedValues('food-actions').map(value => '✅' + value));
+        renderDetails('stg-f-options',food);
+        renderDetails('stg-w-options',checkedValues('water-actions').map(value => '✅' + value));
+        const toilet = [], poop = validCount('poop-count');
+        if (poop !== null) toilet.push('大便：' + poop + ' 份');
+        const urine = [];
+        for (let i = 1; i <= 2; i++) {
+            const count = validCount('urine-count-' + i), size = chosen('urine-size-' + i);
+            if (count !== null) urine.push(count + ' 塊' + (count !== '0' && size ? '（' + size + '）' : ''));
+        }
+        if (urine.length) toilet.push('尿塊：' + urine.join('、'));
+        renderDetails('stg-p-options',toilet);
     }
     function tg(button) { button.classList.toggle('active'); syncText(); }
     function clearChoice(name) { document.querySelectorAll(`input[name="${name}"]`).forEach(i => i.checked = false); syncText(); }
